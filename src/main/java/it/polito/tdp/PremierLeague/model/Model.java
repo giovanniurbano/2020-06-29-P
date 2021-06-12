@@ -1,6 +1,5 @@
 package it.polito.tdp.PremierLeague.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,11 @@ public class Model {
 		Graphs.addAllVertices(this.grafo, this.vertici);
 		
 		//archi
-		
+		for(Adiacenza a : this.dao.getAdiacenze(mese, mins, idMap)) {
+			if(!this.grafo.containsEdge(a.getM1(), a.getM2())) {
+				Graphs.addEdge(this.grafo, a.getM1(), a.getM2(), a.getPeso());
+			}
+		}
 		
 		
 		return String.format("Grafo creato con %d vertici e %d archi\n", this.grafo.vertexSet().size(), this.grafo.edgeSet().size());

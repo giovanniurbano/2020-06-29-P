@@ -6,7 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import it.polito.tdp.PremierLeague.model.Action;
+import it.polito.tdp.PremierLeague.model.Adiacenza;
 import it.polito.tdp.PremierLeague.model.Match;
 import it.polito.tdp.PremierLeague.model.Player;
 
@@ -111,6 +114,45 @@ public class PremierLeagueDAO {
 				
 				result.add(match);
 
+			}
+			conn.close();
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public List<Adiacenza> getAdiacenze(Integer mese, int mins, Map<Integer, Match> idMap) {
+		String sql = "SELECT a1.MatchID AS id1, a2.MatchID AS id2, COUNT(*) AS peso "
+				+ "FROM actions a1, actions a2, matches m1, matches m2 "
+				+ "WHERE a1.MatchID > a2.MatchID "
+				+ "AND m1.MatchID = a1.MatchID AND m2.MatchID = a2.MatchID "
+				+ "AND a1.PlayerID = a2.PlayerID "
+				+ "AND MONTH(m1.Date) = MONTH(m2.Date) AND MONTH(m1.Date) = ? "
+				+ "AND a1.TimePlayed >= ? "
+				+ "AND a2.TimePlayed >= ? "
+				+ "GROUP BY a1.MatchID, a2.MatchID "
+				+ "HAVING peso > 0";
+		List<Adiacenza> result = new ArrayList<>();
+		Connection conn = DBConnect.getConnection();
+
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, mese);
+			st.setInt(2, mins);
+			st.setInt(3, mins);
+			
+			ResultSet res = st.executeQuery();
+			while (res.next()) {
+				Match m1 = idMap.get(res.getInt("id1"));
+				Match m2 = idMap.get(res.getInt("id2"));
+				
+				if(m1 != null && m2 != null && !m1.equals(m2)) {
+					Adiacenza a = new Adiacenza(m1, m2, res.getDouble("peso"));
+					result.add(a);
+				}
 			}
 			conn.close();
 			return result;
