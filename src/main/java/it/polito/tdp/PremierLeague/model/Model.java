@@ -102,22 +102,21 @@ public class Model {
 			return;
 		}
 		
-		for(DefaultWeightedEdge e : this.grafo.edgesOf(parziale.get(parziale.size()-1))) {
+		for(Match m : Graphs.neighborListOf(this.grafo, parziale.get(parziale.size()-1))) {
 			Match precedente = parziale.get(parziale.size()-1);
-			Match m = Graphs.getOppositeVertex(this.grafo, e, precedente);
 			
 			if( !(m.getTeamHomeID() == precedente.getTeamHomeID() && m.getTeamAwayID() == precedente.getTeamAwayID())
-				&& !(m.getTeamHomeID() == precedente.getTeamAwayID() && m.getTeamAwayID() == precedente.getTeamHomeID()) ) {
+				&& !(m.getTeamHomeID() == precedente.getTeamAwayID() && m.getTeamAwayID() == precedente.getTeamHomeID()) 
+				&& !parziale.contains(m)) {
 			
-				p += this.grafo.getEdgeWeight(e);
+				p += this.grafo.getEdgeWeight(this.grafo.getEdge(precedente, m));
 				parziale.add(m);
 				
 				this.cerca(parziale, arrivo, L+1, p);
 				
 				//backtracking
 				parziale.remove(parziale.size()-1);
-				p -= this.grafo.getEdgeWeight(e);
-				this.cerca(parziale, arrivo, L+1, p);
+				p -= this.grafo.getEdgeWeight(this.grafo.getEdge(precedente, m));
 			}
 		}
 		
