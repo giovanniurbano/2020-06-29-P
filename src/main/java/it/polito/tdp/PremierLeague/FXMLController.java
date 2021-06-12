@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.PremierLeague.model.Adiacenza;
 import it.polito.tdp.PremierLeague.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -52,7 +54,17 @@ public class FXMLController {
 
     @FXML
     void doConnessioneMassima(ActionEvent event) {
+    	this.txtResult.clear();
     	
+    	if(this.model.getGrafo() == null) {
+    		this.txtResult.appendText("Creare prima il grafo!");
+    		return;
+    	}
+    	
+    	this.txtResult.setText("COPPIE CON CONNESSIONE MASSIMA:\n");
+    	for(Adiacenza a : this.model.getConnessioniMax()) {
+    		this.txtResult.appendText(a.getM1() + " - " + a.getM2() + " (" + a.getPeso() + ")\n");
+    	}
     }
 
     @FXML

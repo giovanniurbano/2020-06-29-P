@@ -1,5 +1,7 @@
 package it.polito.tdp.PremierLeague.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ public class Model {
 	private List<Match> vertici;
 	private Map<Integer, Match> idMap;
 	private Graph<Match, DefaultWeightedEdge> grafo;
+	private List<Adiacenza> adiacenze;
 	
 	public Model() {
 		this.dao = new PremierLeagueDAO();
@@ -34,14 +37,33 @@ public class Model {
 		Graphs.addAllVertices(this.grafo, this.vertici);
 		
 		//archi
-		for(Adiacenza a : this.dao.getAdiacenze(mese, mins, idMap)) {
+		this.adiacenze = this.dao.getAdiacenze(mese, mins, idMap);
+		for(Adiacenza a : adiacenze) {
 			if(!this.grafo.containsEdge(a.getM1(), a.getM2())) {
 				Graphs.addEdge(this.grafo, a.getM1(), a.getM2(), a.getPeso());
 			}
 		}
 		
-		
 		return String.format("Grafo creato con %d vertici e %d archi\n", this.grafo.vertexSet().size(), this.grafo.edgeSet().size());
 	}
+
+	public Graph<Match, DefaultWeightedEdge> getGrafo() {
+		return grafo;
+	}
 	
+	public List<Adiacenza> getConnessioniMax() {
+		Collections.sort(adiacenze);
+		
+		List<Adiacenza> adiacenzeShortList = new ArrayList<Adiacenza>();
+		for(Adiacenza a : adiacenze) {
+			if(adiacenzeShortList.isEmpty())
+				adiacenzeShortList.add(a);
+			else {
+				if(a.getPeso() >= adiacenzeShortList.get(0).getPeso())
+					adiacenzeShortList.add(a);
+			}
+		}
+		
+		return adiacenzeShortList;
+	}
 }
