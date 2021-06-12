@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.PremierLeague.model.Adiacenza;
+import it.polito.tdp.PremierLeague.model.Match;
 import it.polito.tdp.PremierLeague.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -44,10 +45,10 @@ public class FXMLController {
     private ComboBox<Integer> cmbMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbM1"
-    private ComboBox<?> cmbM1; // Value injected by FXMLLoader
+    private ComboBox<Match> cmbM1; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbM2"
-    private ComboBox<?> cmbM2; // Value injected by FXMLLoader
+    private ComboBox<Match> cmbM2; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
@@ -70,6 +71,8 @@ public class FXMLController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	this.txtResult.clear();
+    	this.cmbM1.getItems().clear();
+    	this.cmbM2.getItems().clear();
     	
     	String min = this.txtMinuti.getText();
     	try {
@@ -86,6 +89,9 @@ public class FXMLController {
     		
     		String msg = this.model.creaGrafo(mins, mese);
     		this.txtResult.appendText(msg);
+    		
+    		this.cmbM1.getItems().addAll(this.model.getVertici());
+    		this.cmbM2.getItems().addAll(this.model.getVertici());
     	}
     	catch(NumberFormatException nfe) {
     		this.txtResult.appendText("Inserire un numero!");

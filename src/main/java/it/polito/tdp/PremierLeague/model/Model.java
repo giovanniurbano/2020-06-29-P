@@ -66,4 +66,9 @@ public class Model {
 		
 		return adiacenzeShortList;
 	}
+
+	public List<Match> getVertici() {
+		return vertici;
+	}
+	
 }
