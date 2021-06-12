@@ -39,7 +39,7 @@ public class FXMLController {
     private TextField txtMinuti; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbMese"
-    private ComboBox<?> cmbMese; // Value injected by FXMLLoader
+    private ComboBox<Integer> cmbMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbM1"
     private ComboBox<?> cmbM1; // Value injected by FXMLLoader
@@ -57,7 +57,28 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	this.txtResult.clear();
     	
+    	String min = this.txtMinuti.getText();
+    	try {
+    		int mins = Integer.parseInt(min);
+    		if(mins < 0) {
+    			this.txtResult.appendText("Inserire un numero maggiore di zero!");
+        		return;
+    		}
+    		Integer mese = this.cmbMese.getValue();
+    		if(mese == null) {
+    			this.txtResult.appendText("Scegliere un mese!");
+        		return;
+    		}
+    		
+    		String msg = this.model.creaGrafo(mins, mese);
+    		this.txtResult.appendText(msg);
+    	}
+    	catch(NumberFormatException nfe) {
+    		this.txtResult.appendText("Inserire un numero!");
+    		return;
+    	}
     }
 
     @FXML
@@ -79,7 +100,10 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
-  
+    	
+    	for(int i=1; i<13; i++) {
+    		this.cmbMese.getItems().add(i);
+    	}
     }
     
     
