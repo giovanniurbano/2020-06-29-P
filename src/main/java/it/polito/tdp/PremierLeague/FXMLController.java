@@ -5,8 +5,6 @@
 package it.polito.tdp.PremierLeague;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.PremierLeague.model.Adiacenza;
@@ -101,7 +99,30 @@ public class FXMLController {
 
     @FXML
     void doCollegamento(ActionEvent event) {
+    	this.txtResult.clear();
     	
+    	if(this.model.getGrafo() == null) {
+    		this.txtResult.appendText("Creare prima il grafo!");
+    		return;
+    	}
+    	
+    	Match partenza = this.cmbM1.getValue();
+    	Match arrivo = this.cmbM2.getValue();
+    	
+    	if(partenza == null || arrivo == null) {
+    		this.txtResult.appendText("Scegliere partenza e/o arrivo!");
+    		return;
+    	}
+    	
+    	this.txtResult.appendText("COLLEGAMENTO:\n");
+    	if(this.model.getCollegamento(partenza, arrivo) == null)
+    		this.txtResult.appendText("NESSUN COLLEGAMENTO!");
+    	else {
+	    	for(Match m : this.model.getCollegamento(partenza, arrivo)) {
+	    		this.txtResult.appendText(m + "\n");
+	    	}
+	    	this.txtResult.appendText("\nPESO TOTALE DEL COLLEGAMENTO: " + this.model.getPesoCollegamento());
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete

@@ -21,6 +21,9 @@ public class Model {
 	private Graph<Match, DefaultWeightedEdge> grafo;
 	private List<Adiacenza> adiacenze;
 	
+	private List<Match> collegamento;
+	private double pesoCollegamento;
+	
 	public Model() {
 		this.dao = new PremierLeagueDAO();
 	}
@@ -69,6 +72,59 @@ public class Model {
 
 	public List<Match> getVertici() {
 		return vertici;
+	}
+	
+	public List<Match> getCollegamento(Match partenza, Match arrivo) {
+		this.collegamento = new ArrayList<Match>();
+		this.pesoCollegamento = 0.0;
+		
+		List<Match> parziale = new ArrayList<Match>();
+		parziale.add(partenza);
+		
+		this.cerca(parziale, arrivo, 1, 0.0);
+		
+		return this.collegamento;
+	}
+
+	private void cerca(List<Match> parziale, Match arrivo, int L, double p) {
+		//casi terminali
+		if(parziale.get(parziale.size()-1).equals(arrivo)) {
+			//sono arrivato 
+			if(p > this.pesoCollegamento) {
+				this.collegamento = new ArrayList<Match>(parziale);
+				this.pesoCollegamento = p;
+			}
+			return;
+		}
+		
+		if(L == this.grafo.vertexSet().size()) {
+			//ho finito i match
+			return;
+		}
+		
+		for(DefaultWeightedEdge e : this.grafo.edgesOf(parziale.get(parziale.size()-1))) {
+			Match precedente = parziale.get(parziale.size()-1);
+			Match m = Graphs.getOppositeVertex(this.grafo, e, precedente);
+			
+			if( !(m.getTeamHomeID() == precedente.getTeamHomeID() && m.getTeamAwayID() == precedente.getTeamAwayID())
+				&& !(m.getTeamHomeID() == precedente.getTeamAwayID() && m.getTeamAwayID() == precedente.getTeamHomeID()) ) {
+			
+				p += this.grafo.getEdgeWeight(e);
+				parziale.add(m);
+				
+				this.cerca(parziale, arrivo, L+1, p);
+				
+				//backtracking
+				parziale.remove(parziale.size()-1);
+				p -= this.grafo.getEdgeWeight(e);
+				this.cerca(parziale, arrivo, L+1, p);
+			}
+		}
+		
+	}
+
+	public double getPesoCollegamento() {
+		return pesoCollegamento;
 	}
 	
 }
