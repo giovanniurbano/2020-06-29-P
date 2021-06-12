@@ -40,7 +40,7 @@ public class FXMLController {
     private TextField txtMinuti; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbMese"
-    private ComboBox<Integer> cmbMese; // Value injected by FXMLLoader
+    private ComboBox<String> cmbMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbM1"
     private ComboBox<Match> cmbM1; // Value injected by FXMLLoader
@@ -79,13 +79,28 @@ public class FXMLController {
     			this.txtResult.appendText("Inserire un numero maggiore di zero!");
         		return;
     		}
-    		Integer mese = this.cmbMese.getValue();
+    		String mese = this.cmbMese.getValue();
     		if(mese == null) {
     			this.txtResult.appendText("Scegliere un mese!");
         		return;
     		}
+    		Integer m = -1;
+    		switch(mese) {
+    		case "Gennaio": m = 1; break;
+    		case "Febbraio": m = 2; break;
+    		case "Marzo": m = 3; break;
+    		case "Aprile": m = 4; break;
+    		case "Maggio": m = 5; break;
+    		case "Giugno": m = 6; break;
+    		case "Luglio": m = 7; break;
+    		case "Agosto": m = 8; break;
+    		case "Settembre": m = 9; break;
+    		case "Ottobre": m = 10; break;
+    		case "Novembre": m = 11; break;
+    		case "Dicembre": m = 12; break;
+    		}
     		
-    		String msg = this.model.creaGrafo(mins, mese);
+    		String msg = this.model.creaGrafo(mins, m);
     		this.txtResult.appendText(msg);
     		
     		this.cmbM1.getItems().addAll(this.model.getVertici());
@@ -140,9 +155,8 @@ public class FXMLController {
     public void setModel(Model model) {
     	this.model = model;
     	
-    	for(int i=1; i<13; i++) {
-    		this.cmbMese.getItems().add(i);
-    	}
+    	String[] mesi = {"Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"};
+    	this.cmbMese.getItems().addAll(mesi);
     }
     
     
